@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.ClassBuilderFactory
 import org.jetbrains.kotlin.codegen.DelegatingClassBuilder
 import org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension
+import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.name.FqName
@@ -110,7 +111,8 @@ class GeneratedClassBuilderInterceptorExtension(
             val visitor = super.newMethod(origin, access, name, desc, signature, exceptions)
 
             val mark = heuristicSynthesized(origin) ||
-                heuristicProperty(origin)
+                heuristicProperty(origin) ||
+                isPrimaryConstructor(origin)
 
             if (mark) {
                 messageCollector.report(CompilerMessageSeverity.LOGGING, "Generated: Annotating $descriptor")
@@ -131,5 +133,9 @@ class GeneratedClassBuilderInterceptorExtension(
          */
         private fun heuristicSynthesized(origin: JvmDeclarationOrigin): Boolean =
             (origin.descriptor as? FunctionDescriptor)?.isSynthesized == true || origin.originKind == JvmDeclarationOriginKind.SYNTHETIC
+
+        private fun isPrimaryConstructor(origin: JvmDeclarationOrigin): Boolean =
+            (origin.descriptor as? ConstructorDescriptor)?.isPrimary == true
+
     }
 }

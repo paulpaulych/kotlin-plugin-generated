@@ -17,6 +17,6 @@
 rootProject.name = "kotlin-plugin-generated"
 
 include(":plugin-compiler")
-include(":plugin-compiler-tests")
+//include(":plugin-compiler-tests")
 include(":plugin-gradle")
-include(":plugin-idea")
+//include(":plugin-idea")
